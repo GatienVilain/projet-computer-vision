@@ -1,47 +1,58 @@
-import tkinter
+from tkinter import *
 
-import cv2
-import PIL.Image, PIL.ImageTk
-import time
+from rps_cv.app.templates.computerlayout import ComputerLayout
+from rps_cv.app.templates.playerlayout import PlayerLayout
 
-from rps_cv.app.controller.videocapture import MyVideoCapture
+from rps_cv.app.controller.videocapture import VideoCapture
 
-class App:
-    def __init__(self, window_title, window, video_source=0):
-        self.window = window
-        self.window.title(window_title)
-        self.video_source = video_source
+
+class App(Tk):
+    def __init__(self, window_title="Rock Paper Scissors", video_source=0):
+        super().__init__()
+
+        self.title(window_title)
 
         # open video source (by default this will try to open the computer webcam)
-        self.vid = MyVideoCapture(self.video_source)
+        self.video_source = video_source
+        self.vid = VideoCapture(self.video_source)
 
-        # Create a canvas that can fit the above video source size
-        self.canvas = tkinter.Canvas(window, width = self.vid.width, height = self.vid.height)
-        self.canvas.pack()
-
-        # Button that lets the user take a snapshot
-        self.btn_snapshot=tkinter.Button(window, text="Snapshot", width=50, command=self.snapshot)
-        self.btn_snapshot.pack(anchor=tkinter.CENTER, expand=True)
+        # Draw the window
+        self.__draw()
 
         # After it is called once, the update method will be automatically called every delay milliseconds
         self.delay = 15
         self.update()
 
-        self.window.mainloop()
+        self.mainloop()
 
-    def snapshot(self):
-        # Get a frame from the video source
-        ret, frame = self.vid.get_frame()
 
-        if ret:
-            cv2.imwrite("frame-" + time.strftime("%d-%m-%Y-%H-%M-%S") + ".jpg", cv2.cvtColor(frame, cv2.COLOR_RGB2BGR))
+    def __draw(self):
+        self.mainFrame = Frame(self)
+        self.mainFrame.pack()
+
+        self.counterText = Label(self.mainFrame, text="1")
+        self.counterText.pack()
+
+        self.canvasRow = Frame(self.mainFrame)
+
+        self.computerLayout = ComputerLayout(self.canvasRow,
+                                             self.vid.width,
+                                             self.vid.height)
+        self.computerLayout.pack(side = LEFT)
+
+        self.playerLayout = PlayerLayout(self.canvasRow, self.vid)
+        self.playerLayout.pack(side = RIGHT)
+
+        self.canvasRow.pack()
+
+        # Button that lets the user take a snapshot
+        self.btn_snapshot = Button(self.mainFrame,
+                                   text="Snapshot",
+                                   width=50,
+                                   command=self.vid.snapshot)
+        self.btn_snapshot.pack(anchor = CENTER, expand=True)
+
 
     def update(self):
-        # Get a frame from the video source
-        ret, frame = self.vid.get_frame()
-
-        if ret:
-            self.photo = PIL.ImageTk.PhotoImage(image = PIL.Image.fromarray(frame))
-        self.canvas.create_image(0, 0, image = self.photo, anchor = tkinter.NW)
-
-        self.window.after(self.delay, self.update)
+        self.playerLayout.update()
+        self.after(self.delay, self.update)
