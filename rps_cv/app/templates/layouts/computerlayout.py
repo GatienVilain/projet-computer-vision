@@ -1,6 +1,6 @@
 import tkinter
 
-from rps_cv.app.templates.canvaslayout import CanvasLayout
+from rps_cv.app.templates.layouts.canvaslayout import CanvasLayout
 
 class ComputerLayout(CanvasLayout):
     def __init__(self, container, width, height):

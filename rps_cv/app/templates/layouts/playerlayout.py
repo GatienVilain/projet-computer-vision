@@ -2,7 +2,7 @@ import tkinter
 
 import PIL.Image, PIL.ImageTk
 
-from rps_cv.app.templates.canvaslayout import CanvasLayout
+from rps_cv.app.templates.layouts.canvaslayout import CanvasLayout
 
 class PlayerLayout(CanvasLayout):
     def __init__(self, container, vid):
