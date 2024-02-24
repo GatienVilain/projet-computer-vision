@@ -3,13 +3,20 @@ from tkinter import *
 from rps_cv.app.templates.layouts.computerlayout import ComputerLayout
 from rps_cv.app.templates.layouts.playerlayout import PlayerLayout
 
+from rps_cv.app.controller.videocontroller import VideoController
+from rps_cv.app.controller.playercontroller import PlayerController
+
+
 class MainFrame(Frame):
-    def __init__(self, container, vid):
+    def __init__(self, container, video_source):
         super().__init__(container)
 
-        self.vid = vid
+        self.video_source = video_source
+        self.videoController = VideoController(self.video_source)
 
         self.__draw()
+
+        self.playerController = PlayerController(self.playerLayout, self.videoController)
 
 
     def __draw(self):
@@ -19,11 +26,13 @@ class MainFrame(Frame):
         self.canvasRow = Frame(self)
 
         self.computerLayout = ComputerLayout(self.canvasRow,
-                                             self.vid.width,
-                                             self.vid.height)
+                                             self.videoController.width,
+                                             self.videoController.height)
         self.computerLayout.pack(side = LEFT)
 
-        self.playerLayout = PlayerLayout(self.canvasRow, self.vid)
+        self.playerLayout = PlayerLayout(self.canvasRow,
+                                         self.videoController.width,
+                                         self.videoController.height)
         self.playerLayout.pack(side = RIGHT)
 
         self.canvasRow.pack()
@@ -32,9 +41,5 @@ class MainFrame(Frame):
         self.btn_snapshot = Button(self,
                                    text="Snapshot",
                                    width=50,
-                                   command=self.vid.snapshot)
+                                   command=self.videoController.snapshot)
         self.btn_snapshot.pack(anchor = CENTER, expand=True)
-
-
-    def update(self):
-        self.playerLayout.update()
