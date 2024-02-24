@@ -8,6 +8,9 @@ class CanvasLayout(tkinter.Frame):
     def __draw(self):
         pass
 
+    def setController(self, controller):
+        pass
+
     def update(self):
         pass
 

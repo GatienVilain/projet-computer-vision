@@ -10,7 +10,7 @@ class PlayerLayout(CanvasLayout):
 
         self.width = width
         self.height = height
-        self.delay = AppConfig["delay"]
+        self.delay = AppConfig["video_frame_delay"]
 
         self.__draw()
 

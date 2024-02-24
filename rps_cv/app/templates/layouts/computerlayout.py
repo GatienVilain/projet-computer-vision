@@ -11,6 +11,8 @@ class ComputerLayout(CanvasLayout):
 
         self.__draw()
 
+        self.controller = None
+
     def __draw(self):
         # Create a canvas that can fit the above video source size
         self.canvas = tkinter.Canvas(self,
@@ -20,3 +22,7 @@ class ComputerLayout(CanvasLayout):
 
         self.Label = tkinter.Label(self, text="Papier")
         self.Label.pack()
+
+
+    def setController(self, computerController):
+        self.controller = computerController
