@@ -3,46 +3,48 @@ import time
 from rps_cv.core.service.gameservice import GameService, GameState
 
 from rps_cv.app.config.appconfig import AppConfig
-from rps_cv.app.templates.mainframe import MainFrame
+from rps_cv.app.templates.layouts.mainframe import MainFrame
 
-# Todo move on App(TK) level
 
 class GameController:
     def __init__(self, mainframe, playerService, computerService):
+        self.mainframe = mainframe
+        self.mainframe.setController(self)
+
         self.playerService = playerService
         self.computerService = computerService
         self.gameService = GameService(self.playerService,
                                        self.computerService)
 
-        self.mainframe = mainframe
-        self.mainframe.setController(self)
-
         self.roundDuration = AppConfig['round_duration']
+        self.roundNumber = AppConfig['round_number']
+
+        self.mainframe.newGame()
+
 
     def newGame(self):
-        if self.gameService.gameState != GameState.IN_PROGRESS:
-            self.gameService.newGame()
+        if self.gameService.gameState == GameState.FINISHED: return self.getGameWinner()
+        if self.gameService.gameState == GameState.NOT_STARTED:
+            self.gameService.newGame(self.roundNumber)
 
         self.nextRound()
 
 
     def nextRound(self):
         if self.gameService.roundState == GameState.IN_PROGRESS: return
-        if self.gameService.gameState == GameState.FINISHED: self.getGameWinner()
+        if self.gameService.gameState == GameState.NOT_STARTED: return self.newGame()
+        if self.gameService.gameState == GameState.FINISHED: return self.getGameWinner()
 
-        # self.mainframe.displayRoundLayout()
         self.gameService.nextRound()
-
-        time.sleep(self.roundDuration) # in seconds
-        self.getRoundWinner()
+        self.mainframe.displayRoundLayout(self.roundDuration * 1000)
 
 
     def getRoundWinner(self):
-        self.gameService.getGameWinner()
-        # self.mainframe.displayRoundReviewLayout()
+        self.gameService.getRoundWinner()
+        self.mainframe.displayRoundReviewLayout()
 
 
     def getGameWinner(self):
-        self.gameService.getGameWinner()
-        # self.mainframe.displayGameReviewLayout()
+        print(self.gameService.getGameWinner())
+        self.mainframe.displayGameReviewLayout()
 

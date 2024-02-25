@@ -1,6 +1,6 @@
 import tkinter
 
-class CanvasLayout(tkinter.Frame):
+class GenericLayout(tkinter.Frame):
     def __init__(self, container):
         super().__init__(container)
         pass

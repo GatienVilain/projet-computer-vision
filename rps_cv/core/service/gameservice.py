@@ -19,7 +19,7 @@ class PlayerChoiceHandler(Thread):
         self.gameService = gameService
 
     def run(self):
-        self.gameService.nextRound()
+        self.gameService.playerService.makeAChoice()
 
 
 class GameService:
@@ -37,13 +37,17 @@ class GameService:
         self.gameState = GameState.NOT_STARTED
 
 
-    def newGame(self):
-        if self.gameState == GameState.IN_PROGRESS:
+    def newGame(self, defaultRoundNumber = None):
+        if self.gameState != GameState.NOT_STARTED:
+            print("Game already in progress")
             return self.gameState
         self.gameState = GameState.IN_PROGRESS
 
         self.roundCount = 0
-        self.roundNumber = self.defaultRoundNumber
+        if defaultRoundNumber is not None:
+            self.roundNumber = defaultRoundNumber
+        else:
+            self.roundNumber = self.defaultRoundNumber
 
         self.playerService.resetScore()
         self.computerService.resetScore()
@@ -51,8 +55,13 @@ class GameService:
 
     def nextRound(self):
         if self.roundState == GameState.IN_PROGRESS:
+            print("Round already in progress")
             return self.roundState
         if self.gameState == GameState.FINISHED:
+            print("Game already finished")
+            return self.gameState
+        if self.roundCount >= self.roundNumber:
+            print("Game already finished")
             return self.gameState
 
         self.roundState = GameState.IN_PROGRESS
@@ -67,6 +76,7 @@ class GameService:
 
     def getRoundWinner(self):
         if self.roundState != GameState.IN_PROGRESS:
+            print("Round not in progress")
             return None
 
         playerChoice = self.playerService.getChoice()
@@ -80,15 +90,15 @@ class GameService:
         elif playerIs == TurnResult.LOSE:
             self.computerService.setWin()
 
+        if self.roundCount >= self.roundNumber:
+            self.gameState = GameState.FINISHED
+
         self.roundState = GameState.NOT_STARTED
         return playerIs
 
 
     def getGameWinner(self):
-        if self.gameState != GameState.IN_PROGRESS:
-            return None
-
-        if self.roundCount < self.roundNumber:
+        if self.gameState != GameState.FINISHED:
             return None
 
         if self.playerService.score > self.computerService.score:
@@ -96,7 +106,7 @@ class GameService:
         elif self.playerService.score < self.computerService.score:
             result = TurnResult.LOSE
         else:
-            raise ValueError('Game is a draw')
+            result = TurnResult.DRAW
 
-        self.gameState = GameState.FINISHED
+        self.gameState = GameState.NOT_STARTED
         return result

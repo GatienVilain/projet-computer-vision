@@ -1,6 +1,6 @@
 from enum import Enum
 
-class PredictOutput(Enum):
+class Shape(Enum):
     NONE = 0
     ROCK = 1
     PAPER = 2

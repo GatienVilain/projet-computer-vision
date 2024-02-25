@@ -9,13 +9,14 @@ class PlayerService(UserService):
     def __init__(self, videoService):
         super().__init__()
 
-    self.videoService = videoService
-    self.frame = None
+        self.videoService = videoService
+        self.frame = None
+        self.shape = None
 
-    self.model = ModelEntity()
+        self.model = ModelEntity()
 
-    self.delay = CoreConfig['player_choice_delay']
-    self.gettingShape = False
+        self.delay = CoreConfig['player_choice_delay']
+        self.gettingShape = False
 
 
     def makeAChoice(self):
@@ -26,13 +27,15 @@ class PlayerService(UserService):
 
             self.frame = self.videoService.getFrame()
             self.shape = self.model.predict(self.frame)
+            print("player shape: ", self.shape)
 
             time.sleep(self.delay / 1000)
 
 
     def getChoice(self):
         self.gettingShape = False
-        return self.shape()
+        time.sleep(self.delay / 1000)
+        return self.shape
 
 
     def getFrame(self):

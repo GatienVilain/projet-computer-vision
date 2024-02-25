@@ -1,6 +1,12 @@
 from tkinter import *
 
-from rps_cv.app.templates.mainframe import MainFrame
+from rps_cv.app.templates.layouts.mainframe import MainFrame
+
+from rps_cv.core.service.videoservice import VideoService
+from rps_cv.core.service.playerservice import PlayerService
+from rps_cv.core.service.computerservice import ComputerService
+
+from rps_cv.app.controller.gamecontroller import GameController
 
 from rps_cv.app.config.appconfig import AppConfig
 
@@ -14,13 +20,23 @@ class App(Tk):
         self.title(window_title)
 
         self.video_source = video_source
+        self.videoService = VideoService(self.video_source)
+        self.playerService = PlayerService(self.videoService)
+        self.computerService = ComputerService()
 
         # Draw the window
         self.__draw()
 
+        self.gameController = GameController(self.mainFrame,
+                                            self.playerService,
+                                            self.computerService)
+
 
     def __draw(self):
-        self.mainFrame = MainFrame(self, self.video_source)
+        self.mainFrame = MainFrame(self,
+                                   self.videoService,
+                                   self.playerService,
+                                   self.computerService)
         self.mainFrame.pack()
 
 

@@ -1,23 +1,23 @@
 import PIL.Image, PIL.ImageTk
 
 class PlayerController:
-    def __init__(self, playerLayout, playerService, videoController):
-        self.playerService = playerService
-        self.videoController = videoController
-
+    def __init__(self, playerLayout, playerService, videoService):
         self.playerLayout = playerLayout
         self.playerLayout.setController(self)
-        self.playerLayout.update()
+
+        self.playerService = playerService
+        self.videoService = videoService
 
         self.photo = None
         self.roundReview = False
 
+        self.playerLayout.update()
 
     def getNewPhoto(self):
-        if roundReview: return self.photo
+        if self.roundReview: return self.photo
 
         # Get a frame from the video source
-        ret, frame = self.videoController.getFrame()
+        ret, frame = self.videoService.getFrame()
 
         if ret:
             self.photo = PIL.ImageTk.\

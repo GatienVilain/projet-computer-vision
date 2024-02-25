@@ -1,10 +1,10 @@
 import tkinter
 
-from rps_cv.app.templates.layouts.canvaslayout import CanvasLayout
+from rps_cv.app.templates.layouts.genericlayout import GenericLayout
 
 from rps_cv.app.config.appconfig import AppConfig
 
-class PlayerLayout(CanvasLayout):
+class PlayerLayout(GenericLayout):
     def __init__(self, container, width, height):
         super().__init__(container)
 

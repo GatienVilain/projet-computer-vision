@@ -1,8 +1,8 @@
 import tkinter
 
-from rps_cv.app.templates.layouts.canvaslayout import CanvasLayout
+from rps_cv.app.templates.layouts.genericlayout import GenericLayout
 
-class ComputerLayout(CanvasLayout):
+class ComputerLayout(GenericLayout):
     def __init__(self, container, width, height):
         super().__init__(container)
 
