@@ -9,6 +9,7 @@ from rps_cv.app.controller.playercontroller import PlayerController
 from rps_cv.app.config.appconfig import AppConfig
 from rps_cv.core.utils.turnresult import TurnResult
 
+
 class MainFrame(Frame):
     def __init__(self, container, videoService, playerService, computerService):
         super().__init__(container)
@@ -24,13 +25,14 @@ class MainFrame(Frame):
 
         self.controller = None
         self.playerController = PlayerController(self.playerLayout,
-                                                self.playerService,
-                                                self.videoService)
+                                                 self.playerService,
+                                                 self.videoService)
         self.computerController = ComputerController(self.computerLayout,
                                                      self.computerService)
 
         self.default_counter = AppConfig["round_duration"]
         self.counter = self.default_counter
+
 
     def __draw(self):
         self.canvasRow = Frame(self, height=self.video_height)
@@ -53,9 +55,9 @@ class MainFrame(Frame):
         self.canvasRow.pack()
 
         self.btn_nextround = Button(self,
-                                   text="Tour suivant",
-                                   width=50,
-                                   command=self.nextRound)
+                                    text="Tour suivant",
+                                    width=50,
+                                    command=self.nextRound)
         self.btn_nextround.pack(anchor = CENTER, expand=True)
 
 

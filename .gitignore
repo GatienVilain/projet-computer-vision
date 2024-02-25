@@ -160,3 +160,4 @@ cython_debug/
 #.idea/
 
 __pycache__/
+rps_cv/training/resources/
