@@ -1,4 +1,6 @@
 
+from rps_cv.core.utils.shape import Shape
+
 class ComputerController:
     def __init__(self, computerLayout, computerService):
         self.computerLayout = computerLayout
@@ -6,8 +8,11 @@ class ComputerController:
 
         self.computerService = computerService
 
-    def showResult(self):
-        if self.computerService.isWinner():
-            self.computerLayout.showWin()
-        else:
-            self.computerLayout.showLose()
+
+    def newRound(self):
+        self.computerLayout.hideChoice()
+
+
+    def revealChoice(self):
+        self.shape = self.computerService.getChoice()
+        self.computerLayout.showChoice(self.shape)

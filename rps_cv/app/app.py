@@ -18,6 +18,7 @@ class App(Tk):
         super().__init__()
 
         self.title(window_title)
+        self.geometry("1500x600")
 
         self.video_source = video_source
         self.videoService = VideoService(self.video_source)

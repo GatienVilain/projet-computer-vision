@@ -19,7 +19,7 @@ class GameController:
         self.roundDuration = AppConfig['round_duration']
         self.roundNumber = AppConfig['round_number']
 
-        self.mainframe.newGame()
+        self.roundResult = None
 
 
     def newGame(self):
@@ -40,11 +40,11 @@ class GameController:
 
 
     def getRoundWinner(self):
-        self.gameService.getRoundWinner()
+        self.roundResult = self.gameService.getRoundWinner()
         self.mainframe.displayRoundReviewLayout()
 
 
     def getGameWinner(self):
-        print(self.gameService.getGameWinner())
+        self.gameService.getGameWinner()
         self.mainframe.displayGameReviewLayout()
 

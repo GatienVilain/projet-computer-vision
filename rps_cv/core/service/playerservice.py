@@ -27,7 +27,6 @@ class PlayerService(UserService):
 
             self.frame = self.videoService.getFrame()
             self.shape = self.model.predict(self.frame)
-            print("player shape: ", self.shape)
 
             time.sleep(self.delay / 1000)
 

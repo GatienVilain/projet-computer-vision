@@ -11,11 +11,18 @@ class PlayerController:
         self.photo = None
         self.roundReview = False
 
-        self.playerLayout.update()
+        self.update()
+
+
+    def update(self):
+        if not self.roundReview:
+            self.getNewPhoto()
+
+        self.shape = self.playerService.shape
+        self.playerLayout.update(self.photo, self.shape)
+
 
     def getNewPhoto(self):
-        if self.roundReview: return self.photo
-
         # Get a frame from the video source
         ret, frame = self.videoService.getFrame()
 
@@ -26,13 +33,9 @@ class PlayerController:
         return self.photo
 
 
-    def showResult(self):
-        roundReview = True
-        if self.playerService.isWinner():
-            self.playerLayout.showWin()
-        else:
-            self.playerLayout.showLose()
+    def setRoundReview(self):
+        self.roundReview = True
 
 
     def unsetRoundReview(self):
-        roundReview = False
+        self.roundReview = False

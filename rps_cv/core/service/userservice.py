@@ -13,6 +13,10 @@ class UserService:
         self.winner = False
 
 
+    def getScore(self):
+        return self.score
+
+
     def isWinner(self):
         return self.winner
 
