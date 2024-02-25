@@ -24,10 +24,10 @@ class MainFrame(Frame):
         self.__draw()
 
         self.controller = None
-        self.playerController = PlayerController(self.playerLayout,
+        self.playerController = PlayerController(self.roundLayout.playerLayout,
                                                  self.playerService,
                                                  self.videoService)
-        self.computerController = ComputerController(self.computerLayout,
+        self.computerController = ComputerController(self.roundLayout.computerLayout,
                                                      self.computerService)
 
         self.default_counter = AppConfig["round_duration"]
@@ -35,30 +35,69 @@ class MainFrame(Frame):
 
 
     def __draw(self):
-        self.canvasRow = Frame(self, height=self.video_height)
+        self.__drawRoundLayout()
+        self.__drawGameReview()
 
-        self.computerLayout = ComputerLayout(self.canvasRow,
-                                             self.video_width,
-                                             self.video_height)
-        self.computerLayout.pack(side = LEFT)
 
-        self.counterText = Label(self.canvasRow,
-                                 text="Victoires",
-                                 width=12)
-        self.counterText.pack(side = LEFT)
+    def __drawRoundLayout(self):
+        self.roundLayout = Frame(self)
 
-        self.playerLayout = PlayerLayout(self.canvasRow,
-                                         self.video_width,
-                                         self.video_height)
-        self.playerLayout.pack(side = RIGHT)
+        self.roundLayout.canvasRow = Frame(
+            self.roundLayout,
+            height=self.video_height
+        )
 
-        self.canvasRow.pack()
+        self.roundLayout.computerLayout = ComputerLayout(
+            self.roundLayout.canvasRow,
+            self.video_width,
+            self.video_height
+        )
+        self.roundLayout.computerLayout.pack(side = LEFT)
 
-        self.btn_nextround = Button(self,
-                                    text="Tour suivant",
-                                    width=50,
-                                    command=self.nextRound)
-        self.btn_nextround.pack(anchor = CENTER, expand=True)
+        self.roundLayout.counterText = Label(
+            self.roundLayout.canvasRow,
+            text="Victoires",
+            width=12
+        )
+        self.roundLayout.counterText.pack(side = LEFT)
+
+        self.roundLayout.playerLayout = PlayerLayout(
+            self.roundLayout.canvasRow,
+            self.video_width,
+            self.video_height
+        )
+        self.roundLayout.playerLayout.pack(side = RIGHT)
+
+        self.roundLayout.canvasRow.pack()
+
+        self.roundLayout.btn_nextround = Button(
+            self.roundLayout,
+            text="Tour suivant",
+            width=50,
+            command=self.nextRound
+        )
+        self.roundLayout.btn_nextround.pack(anchor = CENTER, expand=True)
+
+
+    def __drawGameReview(self):
+        self.gameReviewLayout = Frame(self)
+
+        self.gameReviewLayout.label = Label(
+            self.gameReviewLayout,
+            text="Bienvenue dans le jeu de Pierre-Feuille-Ciseaux !",
+            font='Arial 17 bold',
+            height=10
+        )
+        self.gameReviewLayout.label.pack()
+
+        self.gameReviewLayout.button = Button(
+            self.gameReviewLayout,
+            text="Nouvelle partie",
+            command=self.newGame
+        )
+        self.gameReviewLayout.button.pack()
+
+        self.gameReviewLayout.pack()
 
 
     def setController(self, computerController):
@@ -74,10 +113,13 @@ class MainFrame(Frame):
 
 
     def displayRoundLayout(self, delay):
+        self.roundLayout.pack()
+        self.gameReviewLayout.pack_forget()
+
         self.computerController.newRound()
         self.playerController.unsetRoundReview()
         self.updateCounter(self.default_counter)
-        self.btn_nextround.pack_forget()
+        self.roundLayout.btn_nextround.pack_forget()
 
         self.after(delay, self.controller.getRoundWinner)
 
@@ -86,16 +128,18 @@ class MainFrame(Frame):
         self.computerController.revealChoice()
         self.playerController.setRoundReview()
         self.showLabelResult()
-        self.btn_nextround.pack(anchor = CENTER, expand=True)
+        self.roundLayout.btn_nextround.pack(anchor = CENTER, expand=True)
 
 
     def displayGameReviewLayout(self):
-        pass
+        self.showGameResult()
+        self.gameReviewLayout.pack()
+        self.roundLayout.pack_forget()
 
 
     def updateCounter(self, counter = None):
         if counter: self.counter = counter
-        self.counterText.config(text=str(self.counter))
+        self.roundLayout.counterText.config(text=str(self.counter))
         self.counter -= 1
         if self.counter > 0:
             self.after(1000, self.updateCounter)
@@ -104,8 +148,30 @@ class MainFrame(Frame):
     def showLabelResult(self):
         result = self.controller.roundResult
         if result == TurnResult.WIN:
-            self.counterText.config(text="Victoire")
+            self.roundLayout.counterText.config(text="Victoire")
         elif result == TurnResult.LOSE:
-            self.counterText.config(text="Défaite")
+            self.roundLayout.counterText.config(text="Défaite")
         elif result == TurnResult.DRAW:
-            self.counterText.config(text="Égalité")
+            self.roundLayout.counterText.config(text="Égalité")
+
+
+    def showGameResult(self):
+        result = self.controller.gameResult
+        text = ""
+        if result == TurnResult.WIN:
+            text = "Victoire, vous avez gagné avec " +\
+                    str(self.playerService.getScore()) +\
+                    " victoires contre " +\
+                    str(self.computerService.getScore())
+        elif result == TurnResult.LOSE:
+            text = "Défaite, vous avez perdu avec " +\
+                    str(self.playerService.getScore()) +\
+                    " victoires contre " +\
+                    str(self.computerService.getScore())
+        elif result == TurnResult.DRAW:
+            text = "Égalité, vous avez fait match nul avec " +\
+                    str(self.playerService.getScore()) +\
+                    " victoires contre " +\
+                    str(self.computerService.getScore()) +\
+                    ". Une partie supplémentaire pour vous départager ?"
+        self.gameReviewLayout.label.config(text=text)
