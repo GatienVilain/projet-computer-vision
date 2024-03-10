@@ -13,14 +13,12 @@ class ModelEntity:
         self.model_path = model_path
         self.model = load_model(self.model_path)
 
-    def predict(self, file_path):
-        # Predicting images
-        img = image.load_img(file_path, target_size=(150, 150))
-        x = image.img_to_array(img)
-        x = np.expand_dims(x, axis=0)
 
-        images = np.vstack([x])
-        classes = model.predict(images, batch_size=10)
+    def predict(self, frame):
+        # Predicting images
+        image = self._prepare_frame(frame)
+
+        classes = self.model.predict(image, batch_size=10)
 
         # Class labels
         class_labels = [Shape.ROCK, Shape.PAPER, Shape.SCISSORS]
@@ -31,9 +29,13 @@ class ModelEntity:
         # Returning the predicted class from the Shape enumeration
         return class_labels[predicted_index]
 
-    def prepare_frame(self, frame):
-        cv2.imwrite("photo_capturee.jpg", frame)
-        return ("photo_capturee.jpg")
+
+    def _prepare_frame(self, frame):
+        img = cv2.resize(frame, (150, 150))
+        x = image.img_to_array(img)
+        x = np.expand_dims(x, axis=0)
+
+        return np.vstack([x])
 
 
 """    def predict(self, frame):
@@ -57,10 +59,4 @@ class ModelEntity:
             return Shape.PAPER
         elif shape is 2:
             return Shape.SCISSORS
-
-
-    def _prepare_frame(self, frame):
-        pass # TODO: implement
-
 '''
-
