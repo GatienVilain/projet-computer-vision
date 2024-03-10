@@ -21,7 +21,7 @@ class ModelEntity:
         classes = self.model.predict(image, batch_size=10)
 
         # Class labels
-        class_labels = [Shape.ROCK, Shape.PAPER, Shape.SCISSORS]
+        class_labels = [Shape.PAPER, Shape.ROCK, Shape.SCISSORS]
 
         # Finding the index of the predicted class
         predicted_index = np.argmax(classes[0])
